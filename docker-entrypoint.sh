@@ -1,6 +1,6 @@
 #!/bin/bash
 
-postconf -e "relayhost = [${SMTP_HOST}]:587" \
+postconf -e "relayhost = [${SMTP_HOST}]:2587" \
 "smtp_sasl_auth_enable = yes" \
 "smtp_sasl_security_options = noanonymous" \
 "smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd" \
@@ -8,7 +8,7 @@ postconf -e "relayhost = [${SMTP_HOST}]:587" \
 "smtp_tls_security_level = encrypt" \
 "smtp_tls_note_starttls_offer = yes"
 
-echo "[${SMTP_HOST}]:587 ${SMTP_USERNAME}:${SMTP_PASSWORD}" > /etc/postfix/sasl_passwd
+echo "[${SMTP_HOST}]:2587 ${SMTP_USERNAME}:${SMTP_PASSWORD}" > /etc/postfix/sasl_passwd
 
 postmap hash:/etc/postfix/sasl_passwd
 
