@@ -10,17 +10,21 @@ RUN echo smtp > /etc/hostname \
   && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
   && apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
-    postfix \
-    libsasl2-modules \
-    ca-certificates \
+  postfix \
+  libsasl2-modules \
+  ca-certificates \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# enable smtp debugging
+RUN mv /etc/postfix/master.cf /etc/postfix/master.cf.orig && \
+  cat /etc/postfix/master.cf.orig | sed 's/^\(smtp.*\)smtpd$/\1smtpd -v/' > /etc/postfix/master.cf
+
 RUN postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt' && \
-    postconf -e 'syslog_name=smtp' && \
-    postconf -e 'smtpd_use_tls=no' && \
-    postconf -e 'maillog_file=/dev/stdout' && \
-    postconf -e 'mynetworks=0.0.0.0/0'
+  postconf -e 'syslog_name=smtp' && \
+  postconf -e 'smtpd_use_tls=no' && \
+  postconf -e 'maillog_file=/dev/stdout' && \
+  postconf -e 'mynetworks=0.0.0.0/0'
 
 COPY docker-entrypoint.sh /
 
